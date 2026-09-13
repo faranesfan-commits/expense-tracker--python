@@ -6,8 +6,11 @@ FILE_NAME = "expenses.json"
 
 def load_expenses():
     if os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "r") as file:
-            return json.load(file)
+        try:
+            with open(FILE_NAME, "r") as file:
+                return json.load(file)
+        except (json.JSONDecodeError, IOError):
+            return []
     return []
 
 
@@ -20,9 +23,14 @@ expenses = load_expenses()
 
 
 def add_expense():
-    title = input("Expense name: ")
-    amount = float(input("Amount: "))
-    category = input("Category: ")
+    title = input("Expense name: ").strip()
+    category = input("Category: ").strip()
+
+    try:
+        amount = float(input("Amount: "))
+    except ValueError:
+        print("Please enter a valid amount.")
+        return
 
     expense = {
         "title": title,
@@ -56,10 +64,33 @@ def show_expenses():
     print(f"\nTotal expenses: {total:.2f} €")
 
 
+def delete_expense():
+    if not expenses:
+        print("No expenses to delete.")
+        return
+
+    show_expenses()
+
+    try:
+        number = int(input("\nEnter expense number to delete: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
+
+    if 1 <= number <= len(expenses):
+        removed = expenses.pop(number - 1)
+        save_expenses()
+        print(f"{removed['title']} deleted successfully.")
+    else:
+        print("Invalid expense number.")
+
+
 while True:
-    print("\n1. Add expense")
+    print("\n--- Expense Tracker ---")
+    print("1. Add expense")
     print("2. Show expenses")
-    print("3. Exit")
+    print("3. Delete expense")
+    print("4. Exit")
 
     choice = input("Choose: ")
 
@@ -68,7 +99,9 @@ while True:
     elif choice == "2":
         show_expenses()
     elif choice == "3":
+        delete_expense()
+    elif choice == "4":
         print("Goodbye!")
         break
     else:
-        print("Invalid option")
+        print("Invalid option.")
