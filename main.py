@@ -37,8 +37,23 @@ def add_expense():
 
 
 def show_expenses():
-    for expense in expenses:
-        print(expense)
+    if not expenses:
+        print("No expenses found.")
+        return
+
+    print("\n--- Expenses ---")
+
+    total = 0
+
+    for index, expense in enumerate(expenses, start=1):
+        print(
+            f"{index}. {expense['title']} | "
+            f"{expense['amount']:.2f} € | "
+            f"{expense['category']}"
+        )
+        total += expense["amount"]
+
+    print(f"\nTotal expenses: {total:.2f} €")
 
 
 while True:
@@ -53,6 +68,7 @@ while True:
     elif choice == "2":
         show_expenses()
     elif choice == "3":
+        print("Goodbye!")
         break
     else:
         print("Invalid option")
