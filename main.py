@@ -1,4 +1,23 @@
-expenses = []
+import json
+import os
+
+FILE_NAME = "expenses.json"
+
+
+def load_expenses():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
+            return json.load(file)
+    return []
+
+
+def save_expenses():
+    with open(FILE_NAME, "w") as file:
+        json.dump(expenses, file, indent=4)
+
+
+expenses = load_expenses()
+
 
 def add_expense():
     title = input("Expense name: ")
@@ -12,11 +31,15 @@ def add_expense():
     }
 
     expenses.append(expense)
-    print("Expense added.")
+    save_expenses()
+
+    print("Expense added and saved.")
+
 
 def show_expenses():
     for expense in expenses:
         print(expense)
+
 
 while True:
     print("\n1. Add expense")
